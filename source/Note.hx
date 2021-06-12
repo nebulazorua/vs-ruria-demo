@@ -27,6 +27,7 @@ class Note extends FlxSprite
 	public var defaultX:Float = 0;
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
+	public var gfSings:Bool = false; // TODO: replace w/ a player var? 1 for bf, 2 for opponent and 3 for gf
 	public var rawNoteData:Int = 0; // for charting shit and thats it LOL
 
 	public var noteScore:Float = 1;
@@ -191,7 +192,9 @@ class Note extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
+		if(gfSings)
+			visible=false;
+			
 		if (mustPress)
 		{
 			// The * 0.5 is so that it's easier to hit them too late, instead of too early

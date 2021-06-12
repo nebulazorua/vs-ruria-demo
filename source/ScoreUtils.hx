@@ -59,11 +59,11 @@ class ScoreUtils
 		var hit:Float = 0;
 		switch (rating){
 			case 'shit':
-				hit = 1-(Conductor.safeZoneOffset/ratingWindows[0]);
+				hit = 1-(ratingWindows[0]/Conductor.safeZoneOffset);
 			case 'bad':
-				hit = 1-(Conductor.safeZoneOffset/ratingWindows[1]);
+				hit = 1-(ratingWindows[1]/Conductor.safeZoneOffset);
 			case 'good':
-				hit = 1-(Conductor.safeZoneOffset/ratingWindows[2]);
+				hit = 1-(ratingWindows[2]/Conductor.safeZoneOffset);
 			case 'sick':
 				hit = 1;
 		}

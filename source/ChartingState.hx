@@ -74,36 +74,45 @@ class ChartingState extends MusicBeatState
 	**/
 	var curSelectedNote:Array<Dynamic>;
 
-	var tempBpm:Int = 0;
+	var tempBpm:Float = 0;
 
 	var vocals:FlxSound;
 
 	var leftIcon:HealthIcon;
 	var rightIcon:HealthIcon;
+	var midIcon:HealthIcon;
 
 	override function create()
 	{
 		curSection = lastSection;
 
-		gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, GRID_SIZE * 16);
+		gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 12, GRID_SIZE * 16);
 		add(gridBG);
 
 		leftIcon = new HealthIcon('bf');
-		rightIcon = new HealthIcon('dad');
+		rightIcon = new HealthIcon('gf');
+		midIcon = new HealthIcon("bf");
+
 		leftIcon.scrollFactor.set(1, 1);
 		rightIcon.scrollFactor.set(1, 1);
-
+		midIcon.scrollFactor.set(1,1);
 		leftIcon.setGraphicSize(0, 45);
 		rightIcon.setGraphicSize(0, 45);
+		midIcon.setGraphicSize(0,45);
 
 		add(leftIcon);
 		add(rightIcon);
+		add(midIcon);
 
-		leftIcon.setPosition(0, -100);
-		rightIcon.setPosition(gridBG.width / 2, -100);
+		leftIcon.setPosition(0,-100);
+		rightIcon.setPosition((gridBG.width / 3)*2, -100);
+		midIcon.setPosition((gridBG.width/3),-100);
 
-		var gridBlackLine:FlxSprite = new FlxSprite(gridBG.x + gridBG.width / 2).makeGraphic(2, Std.int(gridBG.height), FlxColor.BLACK);
+		var gridBlackLine:FlxSprite = new FlxSprite(gridBG.x + gridBG.width / 3).makeGraphic(2, Std.int(gridBG.height), FlxColor.BLACK);
 		add(gridBlackLine);
+
+		var gridBlackLine2:FlxSprite = new FlxSprite(gridBG.x + (gridBG.width / 3)*2 ).makeGraphic(2, Std.int(gridBG.height), FlxColor.BLACK);
+		add(gridBlackLine2);
 
 		curRenderedNotes = new FlxTypedGroup<Note>();
 		curRenderedSustains = new FlxTypedGroup<FlxSprite>();
@@ -159,7 +168,7 @@ class ChartingState extends MusicBeatState
 		UI_box = new FlxUITabMenu(null, tabs, true);
 
 		UI_box.resize(300, 400);
-		UI_box.x = FlxG.width / 2;
+		UI_box.x = FlxG.width / 2 + 200;
 		UI_box.y = 20;
 		add(UI_box);
 
@@ -170,6 +179,7 @@ class ChartingState extends MusicBeatState
 		add(curRenderedNotes);
 		add(curRenderedSustains);
 
+		updateHeads();
 		super.create();
 	}
 
@@ -455,7 +465,7 @@ class ChartingState extends MusicBeatState
 	}*/
 	function sectionStartTime():Float
 	{
-		var daBPM:Int = _song.bpm;
+		var daBPM:Float = _song.bpm;
 		var daPos:Float = 0;
 		for (i in 0...curSection)
 		{
@@ -794,13 +804,13 @@ class ChartingState extends MusicBeatState
 	{
 		if (check_mustHitSection.checked)
 		{
-			leftIcon.animation.play('bf');
-			rightIcon.animation.play('dad');
+			leftIcon.changeCharacter(_song.player1);
+			midIcon.changeCharacter(_song.player2);
 		}
 		else
 		{
-			leftIcon.animation.play('dad');
-			rightIcon.animation.play('bf');
+			leftIcon.changeCharacter(_song.player2);
+			midIcon.changeCharacter(_song.player1);
 		}
 	}
 
@@ -832,7 +842,7 @@ class ChartingState extends MusicBeatState
 		else
 		{
 			// get last bpm
-			var daBPM:Int = _song.bpm;
+			var daBPM:Float = _song.bpm;
 			for (i in 0...curSection)
 				if (_song.notes[i].changeBPM)
 					daBPM = _song.notes[i].bpm;
@@ -864,6 +874,7 @@ class ChartingState extends MusicBeatState
 			note.sustainLength = daSus;
 			note.setGraphicSize(GRID_SIZE, GRID_SIZE);
 			note.updateHitbox();
+
 			note.x = Math.floor(daNoteInfo * GRID_SIZE);
 			note.y = Math.floor(getYfromStrum((daStrumTime - sectionStartTime()) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps)));
 
