@@ -25,6 +25,7 @@ class HealthIcon extends FlxSprite
 		}else{
 			loadGraphic(Paths.image('iconGrid'), true, 150, 150);
 			animation.add('bf', [0, 1], 0, false);
+			animation.add('bf2', [0, 1], 0, false);
 			animation.add('bf-', [0, 1], 0, false);
 			animation.add('bf-car', [0, 1], 0, false);
 			animation.add('bf-christmas', [0, 1], 0, false);
@@ -47,6 +48,11 @@ class HealthIcon extends FlxSprite
 			animation.add('spirit', [23, 23], 0, false);
 			animation.add('bf-neb', [24,25], 0, false);
 		}
+
+		if(char=='senpai' || char=='senpai-angry' || char=='spirit' || char=='bf-pixel')
+			antialiasing=false;
+		else
+			antialiasing=true;
 
 
 

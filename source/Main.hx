@@ -83,4 +83,5 @@ class Main extends Sprite
 	{
 		return openfl.Lib.current.stage.frameRate;
 	}
+
 }

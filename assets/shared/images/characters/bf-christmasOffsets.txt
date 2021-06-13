@@ -8,3 +8,4 @@ singRIGHTmiss -30 21
 singLEFTmiss 12 24
 singDOWNmiss -11 -19
 hey 7 4
+ouch 14 19

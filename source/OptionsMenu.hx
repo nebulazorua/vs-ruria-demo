@@ -37,7 +37,7 @@ class OptionsMenu extends MusicBeatState
 			new StateOption("Calibrate Offset",new SoundOffsetState()),
 		]),
 		new OptionCategory("Modification",[
-			new ToggleOption("loadModcharts","Load Lua modcharts"),
+			new ToggleOption("loadModcharts","Load modcharts"),
 		]),
 		new OptionCategory("Preferences",[
 			new ToggleOption("pauseHoldAnims","Holds pause anims"),
