@@ -4,6 +4,7 @@ import Options;
 class ScoreUtils
 {
 	public static var gradeArray:Array<String> = ["☆☆☆☆","☆☆☆","☆☆","☆","S+","S","S-","A+","A","A-","B+","B","B-","C+","C","C-","D"];
+	public static var ghostTapping:Bool=false;
 	public static var ratingStrings = [
 		"sick",
 		"good",
@@ -72,15 +73,15 @@ class ScoreUtils
 	public static function RatingToScore(rating:String):Int{
 		var score = 0;
 		switch (rating){
-			case 'shit':
+			case 'shit' | 'bad':
 				score = 0;
-			case 'bad':
-				score = 10;
 			case 'good':
 				score = 100;
 			case 'sick':
 				score = 350;
 		}
+		if(ghostTapping)
+			score=Std.int(score*1.02); // TINY LIL MODIFIER
 		return score;
 	}
 }

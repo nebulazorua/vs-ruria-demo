@@ -23,7 +23,6 @@ class Note extends FlxSprite
 	public var hit:Bool = false;
 	public var rating:String = "sick";
 	public var lastSustainPiece = false;
-	public var sustainBase=false;
 	public var defaultX:Float = 0;
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
@@ -32,6 +31,7 @@ class Note extends FlxSprite
 	public var noteType:Float = 0;
 	public var beingCharted=false;
 	public var noteScore:Float = 1;
+	public var holdParent:Bool=false;
 
 	public static var swagWidth:Float = 160 * 0.7;
 	public static var PURP_NOTE:Int = 0;
@@ -152,6 +152,7 @@ class Note extends FlxSprite
 
 		if (isSustainNote && prevNote != null)
 		{
+			prevNote.holdParent=true;
 			noteScore * 0.2;
 			alpha = 0.6;
 

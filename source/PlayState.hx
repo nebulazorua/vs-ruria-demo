@@ -81,7 +81,8 @@ class PlayState extends MusicBeatState
 	private var gf:Character;
 	private var boyfriend:Boyfriend;
 
-	private var notes:FlxTypedGroup<Note>;
+	private var renderedNotes:FlxTypedGroup<Note>;
+	private var hittableNotes:Array<Note> = [];
 	private var unspawnNotes:Array<Note> = [];
 
 	private var strumLine:FlxSprite;
@@ -233,6 +234,7 @@ class PlayState extends MusicBeatState
 		currentPState=this;
 		currentOptions = OptionUtils.options.clone();
 		ScoreUtils.ratingWindows = OptionUtils.ratingWindowTypes[currentOptions.ratingWindow];
+		ScoreUtils.ghostTapping = currentOptions.ghosttapping;
 		Conductor.safeZoneOffset = ScoreUtils.ratingWindows[3]; // same as shit ms
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
@@ -1058,7 +1060,7 @@ class PlayState extends MusicBeatState
 		add(iconP2);
 
 		strumLineNotes.cameras = [camHUD];
-		notes.cameras = [camHUD];
+		renderedNotes.cameras = [camHUD];
 		healthBar.cameras = [camHUD];
 		healthBarBG.cameras = [camHUD];
 		iconP1.cameras = [camHUD];
@@ -1522,8 +1524,8 @@ class PlayState extends MusicBeatState
 
 		FlxG.sound.list.add(vocals);
 
-		notes = new FlxTypedGroup<Note>();
-		add(notes);
+		renderedNotes = new FlxTypedGroup<Note>();
+		add(renderedNotes);
 
 		var noteData:Array<SwagSection>;
 
@@ -1569,7 +1571,6 @@ class PlayState extends MusicBeatState
 				var susLength:Float = swagNote.sustainLength;
 
 				susLength = susLength / Conductor.stepCrochet;
-				swagNote.sustainBase = Math.floor(susLength)>0;
 
 				unspawnNotes.push(swagNote);
 
@@ -2217,10 +2218,13 @@ class PlayState extends MusicBeatState
 			if (unspawnNotes[0].strumTime - Conductor.songPosition < 1500)
 			{
 				var dunceNote:Note = unspawnNotes[0];
-				notes.add(dunceNote);
+				renderedNotes.add(dunceNote);
+				hittableNotes.push(dunceNote);
 
 				var index:Int = unspawnNotes.indexOf(dunceNote);
 				unspawnNotes.splice(index, 1);
+
+				hittableNotes.sort((a,b)->Std.int(a.strumTime-b.strumTime));
 			}
 		}
 
@@ -2266,7 +2270,7 @@ class PlayState extends MusicBeatState
 				note.angle=angle;
 			}
 
-			notes.forEachAlive(function(daNote:Note)
+			renderedNotes.forEachAlive(function(daNote:Note)
 			{
 				var strumLine = strumLine;
 				if(modchart.playerNotesFollowReceptors)
@@ -2401,7 +2405,7 @@ class PlayState extends MusicBeatState
 							singer.playAnim(anim,true);
 						}else if(currentOptions.pauseHoldAnims && !canHold){
 							singer.playAnim(anim,true);
-							if(daNote.isSustainNote && !daNote.animation.curAnim.name.endsWith("end") || daNote.sustainLength>0 )
+							if(daNote.holdParent )
 								singer.holding=true;
 							else{
 								singer.holding=false;
@@ -2414,7 +2418,7 @@ class PlayState extends MusicBeatState
 					if(!daNote.gfSings){
 						switch(daNote.noteType){
 							case 1:
-								if(daNote.isSustainNote || daNote.sustainLength>0){
+								if(daNote.isSustainNote || daNote.holdParent){
 									health-=.075;
 								}else{
 									health-=.125;
@@ -2445,7 +2449,8 @@ class PlayState extends MusicBeatState
 					lastHitDadNote=daNote;
 					if(!daNote.isSustainNote){
 						daNote.kill();
-						notes.remove(daNote, true);
+						hittableNotes.remove(daNote);
+						renderedNotes.remove(daNote, true);
 						daNote.destroy();
 					}
 				}
@@ -2468,7 +2473,8 @@ class PlayState extends MusicBeatState
 					daNote.visible = false;
 
 					daNote.kill();
-					notes.remove(daNote, true);
+					hittableNotes.remove(daNote);
+					renderedNotes.remove(daNote, true);
 					daNote.destroy();
 				}
 			});
@@ -2839,11 +2845,12 @@ class PlayState extends MusicBeatState
 
 		if((left || right || up || down) && generatedMusic ){
 			var hitting=[];
-			notes.forEachAlive( function(daNote:Note){
+			//renderedNotes.forEachAlive( function(daNote:Note){
+			for(daNote in hittableNotes){
 				if(daNote.isSustainNote && daNote.canBeHit && daNote.mustPress && holdArray[daNote.noteData]){
 					noteHit(daNote);
 				}
-			});
+			};
 
 		};
 
@@ -2853,7 +2860,8 @@ class PlayState extends MusicBeatState
 				var possibleNotes:Array<Note> = [];
 				var ignoreList = [];
 				var what = [];
-				notes.forEachAlive( function(daNote:Note){
+				//notes.forEachAlive( function(daNote:Note){
+				for(daNote in hittableNotes){
 					if(daNote.canBeHit && daNote.mustPress && !daNote.tooLate && !daNote.wasGoodHit && !daNote.isSustainNote){
 						if(ignoreList.contains(daNote.noteData)){
 							for(note in possibleNotes){
@@ -2869,13 +2877,15 @@ class PlayState extends MusicBeatState
 							ignoreList.push(daNote.noteData);
 						};
 					};
-				});
+				};
 
 				for(daNote in what){
 					daNote.kill();
-					notes.remove(daNote,true);
+					renderedNotes.remove(daNote,true);
+					hittableNotes.remove(daNote);
 					daNote.destroy();
 				};
+
 				possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
 
 				if(perfectMode){
@@ -2910,6 +2920,7 @@ class PlayState extends MusicBeatState
 					boyfriend.dance();
 				}
 			}
+
 
 			playerStrums.forEach(function(spr:FlxSprite)
 			{
@@ -3028,7 +3039,8 @@ class PlayState extends MusicBeatState
 			if (!note.isSustainNote)
 			{
 				note.kill();
-				notes.remove(note, true);
+				hittableNotes.remove(note);
+				renderedNotes.remove(note, true);
 				note.destroy();
 			}
 		}
@@ -3076,7 +3088,7 @@ class PlayState extends MusicBeatState
 					boyfriend.playAnim(anim,true);
 				}else if(currentOptions.pauseHoldAnims && !canHold){
 					boyfriend.playAnim(anim,true);
-					if(note.isSustainNote && !note.animation.curAnim.name.endsWith("end") || note.sustainLength>0 )
+					if(note.holdParent)
 						boyfriend.holding=true;
 					else{
 						boyfriend.holding=false;
@@ -3133,9 +3145,9 @@ class PlayState extends MusicBeatState
 					boyfriend.playAnim(anim,true);
 				}else if(currentOptions.pauseHoldAnims && !canHold){
 					boyfriend.playAnim(anim,true);
-					if(note.isSustainNote && !note.animation.curAnim.name.endsWith("end") || note.sustainLength>0 )
+					if(note.holdParent){
 						boyfriend.holding=true;
-					else{
+					}else{
 						boyfriend.holding=false;
 					}
 
@@ -3202,9 +3214,10 @@ class PlayState extends MusicBeatState
 			boyfriend.playAnim(anim,true);
 		}else if(currentOptions.pauseHoldAnims && !canHold){
 			boyfriend.playAnim(anim,true);
-			if(note.isSustainNote && !note.animation.curAnim.name.endsWith("end") || note.sustainLength>0 )
+			if(note.holdParent ){
+				trace("BF HOLDING",note.holdParent,note.isSustainNote,note.animation.curAnim.name);
 				boyfriend.holding=true;
-			else{
+			}else{
 				boyfriend.holding=false;
 			}
 
@@ -3333,11 +3346,6 @@ class PlayState extends MusicBeatState
 	override function beatHit()
 	{
 		super.beatHit();
-
-		if (generatedMusic)
-		{
-			notes.sort((dumpy, a, b) -> Std.int(b.strumTime - a.strumTime));
-		}
 
 		if (SONG.notes[Math.floor(curStep / 16)] != null)
 		{
