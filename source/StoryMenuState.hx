@@ -23,8 +23,9 @@ class StoryMenuState extends MusicBeatState
 	var scoreText:FlxText;
 
 	var weekData:Array<Dynamic> = [
+		["Tutorial"],
 		["Safe-Trip"],
-		["Safe-Trip-Minus"]
+		["Safe-Trip-Minus","Rough-Play-Minus"]
 	];
 	var curDifficulty:Int = 1;
 
@@ -32,10 +33,12 @@ class StoryMenuState extends MusicBeatState
 
 	var weekCharacters:Array<Dynamic> = [
 		["dad","bf","gf"],
+		["dad","bf","gf"],
 		['dad','bf','gf']
 	];
 
 	var weekNames:Array<String> = [
+		"Tutorial",
 		"Lovely Vacation",
 		"Lovely Vacation Minus"
 	];
@@ -139,18 +142,12 @@ class StoryMenuState extends MusicBeatState
 				case 'dad':
 					weekCharacterThing.setGraphicSize(Std.int(weekCharacterThing.width * 0.5));
 					weekCharacterThing.updateHitbox();
-
 				case 'bf':
 					weekCharacterThing.setGraphicSize(Std.int(weekCharacterThing.width * 0.9));
 					weekCharacterThing.updateHitbox();
 					weekCharacterThing.x -= 80;
 				case 'gf':
 					weekCharacterThing.setGraphicSize(Std.int(weekCharacterThing.width * 0.5));
-					weekCharacterThing.updateHitbox();
-				case 'pico':
-					weekCharacterThing.flipX = true;
-				case 'parents-christmas':
-					weekCharacterThing.setGraphicSize(Std.int(weekCharacterThing.width * 0.9));
 					weekCharacterThing.updateHitbox();
 			}
 
