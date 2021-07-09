@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="strongsnowstorm.png">
+	<!-- Created with Adobe Animate version 21.0.5.40714 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Snow weak instance 10000" x="0" y="0" width="1921" height="1050" pivotX="1370.6" pivotY="791.25" frameX="-909" frameY="0" frameWidth="2830" frameHeight="1531"/>
+	<SubTexture name="Snow weak instance 10001" x="1925" y="0" width="1920" height="1050" frameX="-800" frameY="-44" frameWidth="2830" frameHeight="1531"/>
+	<SubTexture name="Snow weak instance 10002" x="1925" y="0" width="1920" height="1050" frameX="-749" frameY="-87" frameWidth="2830" frameHeight="1531"/>
+	<SubTexture name="Snow weak instance 10003" x="0" y="0" width="1921" height="1050" frameX="-639" frameY="-131" frameWidth="2830" frameHeight="1531"/>
+	<SubTexture name="Snow weak instance 10004" x="1925" y="0" width="1920" height="1050" frameX="-590" frameY="-175" frameWidth="2830" frameHeight="1531"/>
+	<SubTexture name="Snow weak instance 10005" x="1925" y="0" width="1920" height="1050" frameX="-479" frameY="-219" frameWidth="2830" frameHeight="1531"/>
+	<SubTexture name="Snow weak instance 10006" x="0" y="0" width="1921" height="1050" frameX="-429" frameY="-261" frameWidth="2830" frameHeight="1531"/>
+	<SubTexture name="Snow weak instance 10007" x="1925" y="0" width="1920" height="1050" frameX="-321" frameY="-305" frameWidth="2830" frameHeight="1531"/>
+	<SubTexture name="Snow weak instance 10008" x="1925" y="0" width="1920" height="1050" frameX="-270" frameY="-349" frameWidth="2830" frameHeight="1531"/>
+	<SubTexture name="Snow weak instance 10009" x="0" y="1054" width="1920" height="1051" frameX="-160" frameY="-393" frameWidth="2830" frameHeight="1531"/>
+	<SubTexture name="Snow weak instance 10010" x="1925" y="0" width="1920" height="1050" frameX="-111" frameY="-437" frameWidth="2830" frameHeight="1531"/>
+	<SubTexture name="Snow weak instance 10011" x="1924" y="1054" width="1920" height="1051" frameX="0" frameY="-480" frameWidth="2830" frameHeight="1531"/>
+</TextureAtlas>

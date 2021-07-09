@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="snowstorm.png">
+	<!-- Created with Adobe Animate version 21.0.5.40714 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Snow weak0000" x="0" y="0" width="1296" height="724" pivotX="1886" pivotY="1153" frameX="-624" frameY="0" frameWidth="1920" frameHeight="1039"/>
+	<SubTexture name="Snow weak0001" x="1300" y="0" width="1296" height="716" frameX="-549" frameY="-39" frameWidth="1920" frameHeight="1039"/>
+	<SubTexture name="Snow weak0002" x="2600" y="0" width="1296" height="707" frameX="-514" frameY="-77" frameWidth="1920" frameHeight="1039"/>
+	<SubTexture name="Snow weak0003" x="0" y="728" width="1286" height="699" frameX="-447" frameY="-110" frameWidth="1920" frameHeight="1039"/>
+	<SubTexture name="Snow weak0004" x="1290" y="728" width="1287" height="698" frameX="-412" frameY="-137" frameWidth="1920" frameHeight="1039"/>
+	<SubTexture name="Snow weak0005" x="2581" y="728" width="1288" height="692" frameX="-341" frameY="-171" frameWidth="1920" frameHeight="1039"/>
+	<SubTexture name="Snow weak0006" x="0" y="1431" width="1279" height="693" frameX="-311" frameY="-201" frameWidth="1920" frameHeight="1039"/>
+	<SubTexture name="Snow weak0007" x="1283" y="1431" width="1275" height="696" frameX="-241" frameY="-228" frameWidth="1920" frameHeight="1039"/>
+	<SubTexture name="Snow weak0008" x="2562" y="1431" width="1281" height="694" frameX="-204" frameY="-260" frameWidth="1920" frameHeight="1039"/>
+	<SubTexture name="Snow weak0009" x="0" y="2131" width="1284" height="698" frameX="-129" frameY="-284" frameWidth="1920" frameHeight="1039"/>
+	<SubTexture name="Snow weak0010" x="1288" y="2131" width="1285" height="698" frameX="-98" frameY="-309" frameWidth="1920" frameHeight="1039"/>
+	<SubTexture name="Snow weak0011" x="2577" y="2131" width="1304" height="700" frameX="0" frameY="-339" frameWidth="1920" frameHeight="1039"/>
+</TextureAtlas>

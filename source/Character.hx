@@ -12,6 +12,7 @@ using StringTools;
 class Character extends FlxSprite
 {
 	public var animOffsets:Map<String, Array<Dynamic>>;
+	public var offsetNames:Array<String>=[];
 	public var debugMode:Bool = false;
 
 	public var isPlayer:Bool = false;
@@ -143,11 +144,11 @@ class Character extends FlxSprite
 				playAnim('idle');
 			case 'ruria':
 				frames = Paths.getSparrowAtlas('characters/ruria','shared');
-				animation.addByPrefix("idle","Dad idle dance",24,false);
-				animation.addByPrefix("singUP","Dad Sing Note UP",24,false);
-				animation.addByPrefix("singRIGHT","Dad Sing Note RIGHT",24,false);
-				animation.addByPrefix("singLEFT","Dad Sing Note LEFT",24,false);
-				animation.addByPrefix("singDOWN","Dad Sing Note DOWN",24,false);
+				animation.addByPrefix("idle","idle",24,false);
+				animation.addByPrefix("singUP","up",24,false);
+				animation.addByPrefix("singRIGHT","right",24,false);
+				animation.addByPrefix("singLEFT","left",24,false);
+				animation.addByPrefix("singDOWN","down",24,false);
 				antialiasing=false;
 
 				loadOffsets();
@@ -743,6 +744,7 @@ class Character extends FlxSprite
 
 	public function addOffset(name:String, x:Float = 0, y:Float = 0)
 	{
+		offsetNames.push(name);
 		animOffsets[name] = [x, y];
 	}
 }

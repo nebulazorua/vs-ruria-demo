@@ -1004,7 +1004,6 @@ class ChartingState extends MusicBeatState
 				noteType=2;
 			else
 				noteType=1;
-
 		}
 		_song.notes[curSection].sectionNotes.push([noteStrum, noteData, noteSus, noteType]);
 

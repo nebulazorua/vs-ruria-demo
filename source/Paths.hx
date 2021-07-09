@@ -113,6 +113,11 @@ class Paths
 		return getPath('images/$key.png', IMAGE, library);
 	}
 
+	inline static public function pex(key:String, ?library:String)
+	{
+		return getPath('images/$key.pex', TEXT, library);
+	}
+
 	inline static public function font(key:String)
 	{
 		return 'assets/fonts/$key';

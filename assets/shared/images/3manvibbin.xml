@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="3manvibbin.png">
+	<!-- Created with Adobe Animate version 21.0.1.37179 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="3mans_bopin0000" x="0" y="0" width="1698" height="714"/>
+	<SubTexture name="3mans_bopin0001" x="0" y="0" width="1698" height="714"/>
+	<SubTexture name="3mans_bopin0002" x="0" y="0" width="1698" height="714"/>
+	<SubTexture name="3mans_bopin0003" x="1698" y="0" width="1698" height="714"/>
+	<SubTexture name="3mans_bopin0004" x="1698" y="0" width="1698" height="714"/>
+	<SubTexture name="3mans_bopin0005" x="1698" y="0" width="1698" height="714"/>
+	<SubTexture name="3mans_bopin0006" x="0" y="714" width="1698" height="714"/>
+	<SubTexture name="3mans_bopin0007" x="0" y="714" width="1698" height="714"/>
+	<SubTexture name="3mans_bopin0008" x="0" y="714" width="1698" height="714"/>
+	<SubTexture name="3mans_bopin0009" x="1698" y="714" width="1698" height="714"/>
+	<SubTexture name="3mans_bopin0010" x="1698" y="714" width="1698" height="714"/>
+	<SubTexture name="3mans_bopin0011" x="1698" y="714" width="1698" height="714"/>
+</TextureAtlas>

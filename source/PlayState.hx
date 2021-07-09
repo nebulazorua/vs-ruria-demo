@@ -48,6 +48,11 @@ import Shaders;
 import haxe.Exception;
 import openfl.utils.Assets;
 import ModChart;
+import flixel.effects.particles.FlxEmitter;
+import flixel.effects.particles.FlxParticle;
+import flixel.addons.editors.pex.FlxPexParser;
+import flixel.util.helpers.FlxRangeBounds;
+
 #if windows
 import vm.lua.LuaVM;
 import vm.lua.Exception;
@@ -76,7 +81,7 @@ class PlayState extends MusicBeatState
 	var halloweenLevel:Bool = false;
 
 	private var vocals:FlxSound;
-
+	var alreadyEnded:Bool=false;
 	private var dad:Character;
 	private var gf:Character;
 	private var boyfriend:Boyfriend;
@@ -113,12 +118,14 @@ class PlayState extends MusicBeatState
 
 	private var gfSpeed:Int = 1;
 	private var health:Float = 1;
+	private var displayedHealth:Float = 1;
 	private var previousHealth:Float = 1;
 	private var combo:Int = 0;
 	private var highestCombo:Int = 0;
 
 	private var healthBarBG:FlxSprite;
 	private var healthBar:FlxBar;
+	private var barFlash:FlxSprite;
 
 	private var generatedMusic:Bool = false;
 	private var startingSong:Bool = false;
@@ -197,6 +204,8 @@ class PlayState extends MusicBeatState
 	var accuracy:Float = 1;
 	var hitNotes:Float = 0;
 	var totalNotes:Float = 0;
+	var snowStorm:FlxSprite;
+	var snowParticles:FlxEmitter;
 
 	var grade:String = ScoreUtils.gradeArray[0];
 	var misses:Float = 0;
@@ -205,6 +214,9 @@ class PlayState extends MusicBeatState
 	var bads:Float = 0;
 	var shits:Float = 0;
 	var luaModchartExists = false;
+
+	var p1Color:FlxColor = 0xFF66FF33;
+	var p2Color:FlxColor = 0xFFFF0000;
 
 	public static var campaignScore:Int = 0;
 
@@ -708,31 +720,33 @@ class PlayState extends MusicBeatState
 		                            add(waveSpriteFG);
 		                    */
 		          }
-							case 'safe-trip' | 'safe-trip-minus':
+							case 'safe-trip-minus':
+							{
+								curStage='minusRuria';
+								defaultCamZoom = .85;
+								var bg = new FlxSprite(-600,-200).loadGraphic(Paths.image("minusbg"));
+								bg.antialiasing=true;
+								bg.scrollFactor.set(.8,.8);
+								bg.active=false;
+								add(bg);
+
+								var fg = new FlxSprite(-600,-200).loadGraphic(Paths.image("minusfg"));
+								fg.antialiasing=true;
+								fg.scrollFactor.set(1, 1);
+								fg.active=false;
+								add(fg);
+
+								var cool:FlxSprite = new FlxSprite(-500, -300).loadGraphic(Paths.image('minusfilter'));
+								cool.setGraphicSize(Std.int(cool.width * 0.9));
+								cool.updateHitbox();
+								cool.antialiasing = true;
+								cool.scrollFactor.set(1, 1);
+								cool.active = false;
+								add(cool);
+							}
+							case 'safe-trip':
 							{
 								curStage='ruriaSnow';
-								if(SONG.player2=='ruria-'){
-									defaultCamZoom = .85;
-									var bg = new FlxSprite(-600,-200).loadGraphic(Paths.image("minusbg"));
-									bg.antialiasing=true;
-									bg.scrollFactor.set(.8,.8);
-									bg.active=false;
-									add(bg);
-
-									var fg = new FlxSprite(-600,-200).loadGraphic(Paths.image("minusfg"));
-									fg.antialiasing=true;
-									fg.scrollFactor.set(.9,.9);
-									fg.active=false;
-									add(fg);
-
-									var cool:FlxSprite = new FlxSprite(-500, -300).loadGraphic(Paths.image('minusfilter'));
-									cool.setGraphicSize(Std.int(cool.width * 0.9));
-									cool.updateHitbox();
-									cool.antialiasing = true;
-									cool.scrollFactor.set(1, 1);
-									cool.active = false;
-									add(cool);
-								}else{
 									defaultCamZoom = .9;
 									var background = new FlxSprite(-600,-200).loadGraphic(Paths.image("background"));
 									background.antialiasing=true;
@@ -745,7 +759,29 @@ class PlayState extends MusicBeatState
 									cool.scrollFactor.set(1,1);
 									cool.active=false;
 									add(cool);
-								}
+
+									snowStorm = new FlxSprite();
+									snowStorm.frames = Paths.getSparrowAtlas("snowstorm");
+									snowStorm.setGraphicSize(Std.int(snowStorm.width*3));
+									snowStorm.updateHitbox();
+									snowStorm.screenCenter(XY);
+									snowStorm.scrollFactor.set(0,0);
+									snowStorm.animation.addByPrefix("idle","Snow weak",24,true);
+									snowStorm.animation.play("idle");
+
+									snowParticles = new FlxEmitter(100,-50);
+									FlxPexParser.parse(Paths.pex("snow/particle"), Paths.image("snow/texture"), snowParticles, 1);
+									snowParticles.width = 2200;
+									//snowParticles.scale.start.min.set(snowParticles.scale.start.min.x*1.5,snowParticles.scale.start.min.x*1.5);
+									//snowParticles.scale.start.max.set(snowParticles.scale.start.max.x*1.5,snowParticles.scale.start.max.x*1.5);
+
+									snowParticles.loadParticles(Paths.image("snow/texture"), 4000);
+									snowParticles.blend=null;
+									for(i in snowParticles.members){
+										i.blend=null;
+										i.scrollFactor.set(1.05,1.05);
+									}
+									snowParticles.start(false,.01);
 
 							}
 		          default:
@@ -825,6 +861,8 @@ class PlayState extends MusicBeatState
 				dad.y += 200;
 			case 'ruria-':
 				dad.y += 225;
+			case 'ruria':
+				dad.y += 225;
 			case "monster":
 				dad.y += 100;
 			case 'monster-christmas':
@@ -899,6 +937,10 @@ class PlayState extends MusicBeatState
 
 		add(dad);
 		add(boyfriend);
+		if(curStage=='ruriaSnow'){
+			//add(snowStorm);
+			add(snowParticles);
+		}
 
 		var doof:DialogueBox = new DialogueBox(false, dialogue);
 		// doof.x += 70;
@@ -962,10 +1004,13 @@ class PlayState extends MusicBeatState
 		}
 
 		healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
-			'health', 0, 2);
+			'displayedHealth', 0, 2);
 		healthBar.scrollFactor.set();
-		var p1Color = 0xFF66FF33;
-		var p2Color = 0xFFFF0000; // TODO: GIVE EVERYONE CUSTOM HP BAR COLOURS!!!
+		barFlash = new FlxSprite(healthBarBG.x+4, healthBarBG.y+4).makeGraphic(Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8),FlxColor.WHITE);
+		barFlash.alpha = 0;
+		barFlash.scrollFactor.set();
+		p1Color = 0xFF66FF33;
+		p2Color = 0xFFFF0000; // TODO: GIVE EVERYONE CUSTOM HP BAR COLOURS!!!
 		// AND MAKE IT BETTER WITH A NOTEPAD FILE OR SOMETHING!!
 
 		switch(SONG.player1){
@@ -995,6 +1040,7 @@ class PlayState extends MusicBeatState
 		healthBar.createFilledBar(p2Color,p1Color);
 		// healthBar
 		add(healthBar);
+		add(barFlash);
 
 		scoreTxt = new FlxText(healthBarBG.x + healthBarBG.width / 2 - 150, healthBarBG.y + 50, 0, "", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -1062,6 +1108,7 @@ class PlayState extends MusicBeatState
 		strumLineNotes.cameras = [camHUD];
 		renderedNotes.cameras = [camHUD];
 		healthBar.cameras = [camHUD];
+		barFlash.cameras = [camHUD];
 		healthBarBG.cameras = [camHUD];
 		iconP1.cameras = [camHUD];
 		iconP2.cameras = [camHUD];
@@ -1521,6 +1568,7 @@ class PlayState extends MusicBeatState
 			vocals = new FlxSound().loadEmbedded(Paths.voices(songData.song));
 		}else
 			vocals = new FlxSound();
+		vocals.looped=false;
 
 		FlxG.sound.list.add(vocals);
 
@@ -1850,6 +1898,13 @@ class PlayState extends MusicBeatState
 	var startedCountdown:Bool = false;
 	var canPause:Bool = true;
 
+	function updateHP(change:Float){
+		health += change;
+		if(Math.abs(change)>.1){
+			barFlash.alpha=1;
+		}
+	}
+
 	function truncateFloat( number : Float, precision : Int): Float {
 		var num = number;
 		num = num * Math.pow(10, precision);
@@ -1862,6 +1917,10 @@ class PlayState extends MusicBeatState
 		#if !debug
 		perfectMode = false;
 		#end
+
+		if(barFlash.alpha>0){
+			barFlash.alpha -= elapsed*2;
+		}
 
 		if(vcrDistortionHUD!=null){
 			vcrDistortionHUD.update(elapsed);
@@ -1919,6 +1978,7 @@ class PlayState extends MusicBeatState
 
 
 		super.update(elapsed);
+		displayedHealth = FlxMath.lerp(displayedHealth,health,.2/(openfl.Lib.current.stage.frameRate/60));
 
 		scoreTxt.text = "Score:" + songScore + " | Accuracy:" + truncateFloat(accuracy*100, 2) + "% | " + grade;
 		if(luaModchartExists && lua!=null){
@@ -2185,7 +2245,7 @@ class PlayState extends MusicBeatState
 		// CHEAT = brandon's a pussy
 		if (controls.CHEAT)
 		{
-			health += 1;
+			updateHP(1);
 			previousHealth = health;
 			if(luaModchartExists && lua!=null)
 				lua.setGlobalVar("health",health);
@@ -2223,7 +2283,7 @@ class PlayState extends MusicBeatState
 
 				var index:Int = unspawnNotes.indexOf(dunceNote);
 				unspawnNotes.splice(index, 1);
-
+				renderedNotes.sort((dumpy,a,b)->Std.int(b.strumTime-a.strumTime));
 				hittableNotes.sort((a,b)->Std.int(a.strumTime-b.strumTime));
 			}
 		}
@@ -2375,7 +2435,8 @@ class PlayState extends MusicBeatState
 					if(luaModchartExists && lua!=null && !daNote.gfSings){
 						lua.call("dadNoteHit",[Math.abs(daNote.noteData),daNote.strumTime,Conductor.songPosition]); // TODO: Note lua class???
 					}
-					health -= modchart.opponentHPDrain;
+					//health -= modchart.opponentHPDrain;
+					updateHP(-modchart.opponentHPDrain);
 
 						//if(!daNote.isSustainNote){
 
@@ -2419,9 +2480,9 @@ class PlayState extends MusicBeatState
 						switch(daNote.noteType){
 							case 1:
 								if(daNote.isSustainNote || daNote.holdParent){
-									health-=.075;
+									updateHP(-.075);
 								}else{
-									health-=.125;
+									updateHP(-.125);
 								}
 								switch(boyfriend.curCharacter){
 									case 'bf' | 'bf2' | 'bf-christmas':
@@ -2502,7 +2563,7 @@ class PlayState extends MusicBeatState
 			keyShit();
 
 		if(Conductor.songPosition-currentOptions.noteOffset>=FlxG.sound.music.length){
-			if(FlxG.sound.music.volume>0)
+			if(!alreadyEnded)
 				endSong();
 
 			FlxG.sound.music.volume=0;
@@ -2516,6 +2577,7 @@ class PlayState extends MusicBeatState
 
 	function endSong():Void
 	{
+		alreadyEnded=true;
 		canPause = false;
 		FlxG.sound.music.volume = 0;
 		vocals.volume = 0;
@@ -2946,7 +3008,8 @@ class PlayState extends MusicBeatState
 	{
 		boyfriend.holding=false;
 		misses++;
-		health -= 0.04;
+		//health -= 0.04;
+		updateHP(-.04);
 		previousHealth=health;
 		if(luaModchartExists && lua!=null)
 			lua.setGlobalVar("health",health);
@@ -3055,9 +3118,9 @@ class PlayState extends MusicBeatState
 		var strumLine = playerStrumLines.members[note.noteData%4];
 
 		if(note.sustainLength==0 && !note.isSustainNote)
-			health -= .5;
+			updateHP(-.5);
 		else
-			health -= .25;
+			updateHP(-.25);
 		FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.3, 0.6));
 
 		previousHealth=health;
@@ -3185,10 +3248,7 @@ class PlayState extends MusicBeatState
 		}
 
 
-		if (note.noteData >= 0)
-			health += 0.023;
-		else
-			health += 0.004;
+		updateHP(.023);
 
 		previousHealth=health;
 		if(luaModchartExists && lua!=null)
